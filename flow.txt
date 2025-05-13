@@ -1,0 +1,4 @@
+Splash Screen ( for 2 second)
+Login page
+Sign up page
+Dashboard
