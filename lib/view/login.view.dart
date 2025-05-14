@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:jobmaniaapp/view/dashboard.view.dart';
 import 'package:jobmaniaapp/view/forgotpassword.view.dart';
 import 'package:jobmaniaapp/view/signup.view.dart';
 
@@ -78,7 +79,14 @@ class LoginView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DashboardView(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       "Log in",
                       style: TextStyle(fontSize: 16, color: Colors.white),
