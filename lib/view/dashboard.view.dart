@@ -6,8 +6,9 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -19,17 +20,17 @@ class DashboardView extends StatelessWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'Welcome Back!',
-                        style: TextStyle(color: Colors.grey),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.grey,
+                        ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'Subas Kandel',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                        style: theme.textTheme.headlineLarge?.copyWith(
                           color: Colors.black87,
                         ),
                       ),
@@ -37,7 +38,7 @@ class DashboardView extends StatelessWidget {
                   ),
                   const CircleAvatar(
                     backgroundImage: NetworkImage(
-                      'https://avatars.githubusercontent.com/u/67955251?v=4', // Extracted direct image link
+                      'https://avatars.githubusercontent.com/u/67955251?v=4',
                     ),
                     radius: 24,
                   ),
@@ -59,11 +60,11 @@ class DashboardView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              _sectionHeader('Featured Jobs'),
+              _sectionHeader(context, 'Featured Jobs'),
               const SizedBox(height: 16),
-              _featuredJobCard(),
+              _featuredJobCard(theme),
               const SizedBox(height: 32),
-              _sectionHeader('Recommended Jobs'),
+              _sectionHeader(context, 'Recommended Jobs'),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -73,6 +74,7 @@ class DashboardView extends StatelessWidget {
                     title: 'UX Designer',
                     company: 'Dribbble',
                     salary: '\$80,000/y',
+                    theme: theme,
                   ),
                   const SizedBox(width: 16),
                   _recommendedJobCard(
@@ -81,6 +83,7 @@ class DashboardView extends StatelessWidget {
                     title: 'Sr Engineer',
                     company: 'Facebook',
                     salary: '\$96,000/y',
+                    theme: theme,
                   ),
                 ],
               ),
@@ -88,47 +91,24 @@ class DashboardView extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.mail_outline),
-            label: 'Inbox',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_outline),
-            label: 'Saved',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view_rounded),
-            label: 'More',
-          ),
-        ],
-        currentIndex: 0,
-        onTap: (index) {},
-      ),
     );
   }
 
-  Widget _sectionHeader(String title) {
+  Widget _sectionHeader(BuildContext context, String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        Text(title, style: Theme.of(context).textTheme.titleMedium),
         const Text("See all", style: TextStyle(color: Colors.grey)),
       ],
     );
   }
 
-  Widget _featuredJobCard() {
+  Widget _featuredJobCard(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.blue[800],
+        color: theme.colorScheme.primary,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -182,6 +162,7 @@ class DashboardView extends StatelessWidget {
     required String title,
     required String company,
     required String salary,
+    required ThemeData theme,
   }) {
     return Expanded(
       child: Container(
@@ -194,14 +175,21 @@ class DashboardView extends StatelessWidget {
           children: [
             Icon(icon, size: 36),
             const SizedBox(height: 12),
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
+            Text(title, style: theme.textTheme.titleMedium),
             const SizedBox(height: 4),
-            Text(company, style: TextStyle(color: Colors.grey[700])),
+            Text(
+              company,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey[700],
+              ),
+            ),
             const SizedBox(height: 8),
-            Text(salary, style: const TextStyle(fontWeight: FontWeight.w600)),
+            Text(
+              salary,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ),
