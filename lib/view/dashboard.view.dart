@@ -8,87 +8,86 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: ListView(
-            children: [
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Welcome Back!',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
-                        ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: ListView(
+          children: [
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome Back!',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Subas Kandel',
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      'https://avatars.githubusercontent.com/u/67955251?v=4',
                     ),
-                    radius: 24,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Subas Kandel',
+                      style: theme.textTheme.headlineLarge?.copyWith(
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
                 ),
-                child: const TextField(
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.search),
-                    hintText: "Search a job or position",
-                    border: InputBorder.none,
+                const CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    'https://avatars.githubusercontent.com/u/67955251?v=4',
                   ),
+                  radius: 24,
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceVariant,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const TextField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.search),
+                  hintText: "Search a job or position",
+                  border: InputBorder.none,
                 ),
               ),
-              const SizedBox(height: 32),
-              _sectionHeader(context, 'Featured Jobs'),
-              const SizedBox(height: 16),
-              _featuredJobCard(theme),
-              const SizedBox(height: 32),
-              _sectionHeader(context, 'Recommended Jobs'),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  _recommendedJobCard(
-                    color: Colors.pink[50]!,
-                    icon: LucideIcons.dribbble,
-                    title: 'UX Designer',
-                    company: 'Dribbble',
-                    salary: '\$80,000/y',
-                    theme: theme,
-                  ),
-                  const SizedBox(width: 16),
-                  _recommendedJobCard(
-                    color: Colors.blue[50]!,
-                    icon: LucideIcons.facebook,
-                    title: 'Sr Engineer',
-                    company: 'Facebook',
-                    salary: '\$96,000/y',
-                    theme: theme,
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 32),
+            _sectionHeader(context, 'Featured Jobs'),
+            const SizedBox(height: 16),
+            _featuredJobCard(theme),
+            const SizedBox(height: 32),
+            _sectionHeader(context, 'Recommended Jobs'),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                _recommendedJobCard(
+                  color: Colors.pink[50]!,
+                  icon: LucideIcons.dribbble,
+                  title: 'UX Designer',
+                  company: 'Dribbble',
+                  salary: '\$80,000/y',
+                  theme: theme,
+                ),
+                const SizedBox(width: 16),
+                _recommendedJobCard(
+                  color: Colors.blue[50]!,
+                  icon: LucideIcons.facebook,
+                  title: 'Sr Engineer',
+                  company: 'Facebook',
+                  salary: '\$96,000/y',
+                  theme: theme,
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+          ],
         ),
       ),
     );
@@ -136,11 +135,11 @@ class DashboardView extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: const [
-              _jobTag('Design'),
+              _JobTag('Design'),
               SizedBox(width: 8),
-              _jobTag('Full-Time'),
+              _JobTag('Full-Time'),
               SizedBox(width: 8),
-              _jobTag('Junior'),
+              _JobTag('Junior'),
             ],
           ),
           const SizedBox(height: 12),
@@ -197,9 +196,9 @@ class DashboardView extends StatelessWidget {
   }
 }
 
-class _jobTag extends StatelessWidget {
+class _JobTag extends StatelessWidget {
   final String text;
-  const _jobTag(this.text);
+  const _JobTag(this.text);
 
   @override
   Widget build(BuildContext context) {

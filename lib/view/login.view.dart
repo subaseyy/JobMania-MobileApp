@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:jobmaniaapp/view/dashboard.view.dart';
+
 import 'package:jobmaniaapp/view/forgotpassword.view.dart';
+import 'package:jobmaniaapp/view/main.view.dart';
 import 'package:jobmaniaapp/view/signup.view.dart';
 
 class LoginView extends StatelessWidget {
@@ -83,7 +84,7 @@ class LoginView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const DashboardView(),
+                          builder: (context) => const MainView(),
                         ),
                       );
                     },
