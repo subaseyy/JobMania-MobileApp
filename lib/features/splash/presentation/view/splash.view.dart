@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jobmaniaapp/view/login.view.dart';
+import 'package:jobmaniaapp/features/auth/presentation/view/login.view.dart';
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});

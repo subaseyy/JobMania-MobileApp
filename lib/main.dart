@@ -1,6 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:jobmaniaapp/app.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:jobmaniaapp/app/app.dart';
 
-void main() {
-  runApp(const JobManiaApp());
+import 'package:jobmaniaapp/core/network/hive_services.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await initDependencies();
+  // init Hive service
+  await HiveService().init();
+  // Delete database
+  // await HiveService().clearAll();
+  runApp(JobManiaApp());
 }

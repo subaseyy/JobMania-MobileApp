@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dashboard.view.dart';
 import 'inbox.view.dart';
-import 'saved.view.dart';
+import '../../../saved_jobs/presentation/view/saved.view.dart';
 import 'more.view.dart'; // You'll create this below
 
 class MainView extends StatefulWidget {

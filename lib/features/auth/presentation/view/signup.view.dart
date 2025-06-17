@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:jobmaniaapp/view/login.view.dart';
+import 'package:jobmaniaapp/features/auth/presentation/view/login.view.dart';
 
 class SignupView extends StatelessWidget {
   const SignupView({super.key});
