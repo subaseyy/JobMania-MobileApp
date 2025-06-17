@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jobmaniaapp/app/constants/theme_constant.dart';
 
 ThemeData getApplicationTheme() {
   const double largeFontSize = 40;
@@ -10,29 +11,26 @@ ThemeData getApplicationTheme() {
   const FontWeight regular = FontWeight.w400;
   const FontWeight light = FontWeight.w300;
 
-  const Color primaryColor = Color(0xFF356899);
-
   return ThemeData(
     useMaterial3: true,
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: AppColors.white,
     appBarTheme: const AppBarTheme(
-      backgroundColor: primaryColor,
+      backgroundColor: AppColors.primaryColor,
       elevation: 4,
       titleTextStyle: TextStyle(
         fontSize: largeFontSize,
         fontWeight: bold,
-        color: Colors.white,
+        color: AppColors.white,
         fontFamily: 'Montserrat',
       ),
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: IconThemeData(color: AppColors.white),
     ),
     colorScheme: ColorScheme.fromSeed(
-      seedColor: primaryColor,
-      primary: primaryColor,
+      seedColor: AppColors.primaryColor,
+      primary: AppColors.primaryColor,
       brightness: Brightness.light,
     ),
     textTheme: const TextTheme(
-      // Large Headings (AppBar titles, screen titles)
       displayLarge: TextStyle(
         fontSize: largeFontSize,
         fontWeight: bold,
@@ -48,8 +46,6 @@ ThemeData getApplicationTheme() {
         fontWeight: bold,
         fontFamily: 'Montserrat',
       ),
-
-      // Medium text (e.g., job cards, company names)
       displayMedium: TextStyle(
         fontSize: mediumFontSize,
         fontWeight: regular,
@@ -75,8 +71,6 @@ ThemeData getApplicationTheme() {
         fontWeight: semiBold,
         fontFamily: 'Nunito Sans',
       ),
-
-      // Small text (e.g., location, salary, job type tags)
       displaySmall: TextStyle(
         fontSize: smallFontSize,
         fontWeight: light,
