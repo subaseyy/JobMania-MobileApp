@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:jobmaniaapp/features/auth/presentation/view/login.view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jobmaniaapp/features/splash/presentation/view_model/splash_view_model.dart';
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginView()),
-      );
-    });
+    // Initialize Splash Logic
+    context.read<SplashViewModel>().init(context);
 
     return Scaffold(
       body: Container(
@@ -27,11 +24,11 @@ class SplashView extends StatelessWidget {
         ),
         child: Center(
           child: ColorFiltered(
-            colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
             child: Image.asset(
               "assets/logo/splashscreenlogo.png",
-              width: 300, // Adjust the width to make the logo smaller
-              height: 300, // Adjust the height if needed
+              width: 300,
+              height: 300,
             ),
           ),
         ),
