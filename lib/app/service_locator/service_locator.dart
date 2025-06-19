@@ -4,9 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:jobmaniaapp/core/network/hive_services.dart';
 import 'package:jobmaniaapp/core/network/api_service.dart';
 
-// Import your modules here
-// import 'package:jobmaniaapp/features/auth/...';
-// import 'package:jobmaniaapp/features/job/...';
+import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
+import 'package:jobmaniaapp/features/splash/presentation/view_model/splash_view_model.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -20,22 +19,37 @@ Future<void> initDependencies() async {
   await _initApplicationModule();
 }
 
-Future<void> _initCore() async {
-  serviceLocator.registerLazySingleton(() => HiveService());
-  serviceLocator.registerLazySingleton(() => Dio());
-  serviceLocator.registerLazySingleton(() => ApiService(serviceLocator<Dio>()));
-}
-
 Future<void> _initHiveService() async {
   serviceLocator.registerLazySingleton(() => HiveService());
 }
 
-Future<void> _initApplicationModule() async {}
+Future<void> _initCore() async {
+  serviceLocator.registerLazySingleton(() => Dio());
+  serviceLocator.registerLazySingleton<ApiService>(
+    () => ApiService(serviceLocator<Dio>()),
+  );
 
-Future<void> _initAuthModule() async {}
+  // serviceLocator.registerLazySingleton<SplashViewModel>(
+  //   () => SplashViewModel(),
+  // );
+}
 
-Future<void> _initJobModule() async {}
+Future<void> _initAuthModule() async {
+  // serviceLocator.registerLazySingleton<LoginViewModel>(() => LoginViewModel());
+}
 
-Future<void> _initProfileModule() async {}
+Future<void> _initJobModule() async {
+  // Register Job-related services and VMs here
+}
 
-Future<void> _initSavedJobsModule() async {}
+Future<void> _initProfileModule() async {
+  // Register Profile-related services and VMs here
+}
+
+Future<void> _initSavedJobsModule() async {
+  // Register SavedJobs-related services and VMs here
+}
+
+Future<void> _initApplicationModule() async {
+  // Register Application-related services and VMs here
+}
