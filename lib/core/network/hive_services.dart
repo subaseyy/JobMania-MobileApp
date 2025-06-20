@@ -118,4 +118,8 @@ class HiveService {
   Future<void> close() async {
     await Hive.close();
   }
+
+  Future<Box<T>> openBox<T>(String boxName) async {
+    return await Hive.openBox<T>(boxName);
+  }
 }
