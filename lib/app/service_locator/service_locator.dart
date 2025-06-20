@@ -6,7 +6,7 @@ import 'package:jobmaniaapp/core/network/api_service.dart';
 import 'package:jobmaniaapp/features/auth/data/repository/local_repository/auth_repository.dart';
 import 'package:jobmaniaapp/features/auth/data/repository/local_repository/auth_repository_impl.dart';
 import 'package:jobmaniaapp/features/auth/domain/use_case/register_usecase.dart';
-import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_state.dart';
+
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
 
@@ -27,7 +27,7 @@ Future<void> initDependencies() async {
 Future<void> _initHiveService() async {
   final hiveService = HiveService();
 
-  await hiveService.init(); // This initializes Hive and registers adapters
+  await hiveService.init();
   serviceLocator.registerLazySingleton(() => hiveService);
 }
 
@@ -44,19 +44,22 @@ Future<void> _initCore() async {
 
 Future<void> _initAuthModule() async {
   serviceLocator.registerFactory<LoginViewModel>(
-    () => LoginViewModel(LoginState.initial()),
+    () => LoginViewModel(hiveService: serviceLocator<HiveService>()),
   );
 
   serviceLocator.registerFactory<AuthRepository>(
-    () => AuthRepositoryImpl(hiveService: serviceLocator<HiveService>()),
+    () => AuthLocalRepository(hiveService: serviceLocator<HiveService>()),
   );
 
   serviceLocator.registerFactory<RegisterUseCase>(
-    () => RegisterUseCase(repository: serviceLocator<AuthRepository>()),
+    () => RegisterUseCase(Object, repository: serviceLocator<AuthRepository>()),
   );
 
   serviceLocator.registerFactory<SignupViewModel>(
-    () => SignupViewModel(useCase: serviceLocator<RegisterUseCase>()),
+    () => SignupViewModel(
+      useCase: serviceLocator<RegisterUseCase>(),
+      hiveService: serviceLocator<HiveService>(),
+    ),
   );
 }
 
