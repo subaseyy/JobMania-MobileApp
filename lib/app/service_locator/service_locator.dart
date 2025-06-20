@@ -1,10 +1,15 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
-
 import 'package:jobmaniaapp/core/network/hive_services.dart';
 import 'package:jobmaniaapp/core/network/api_service.dart';
 
+import 'package:jobmaniaapp/features/auth/data/repository/local_repository/auth_repository.dart';
+import 'package:jobmaniaapp/features/auth/data/repository/local_repository/auth_repository_impl.dart';
+import 'package:jobmaniaapp/features/auth/domain/use_case/register_usecase.dart';
+import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_state.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
+import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
+
 import 'package:jobmaniaapp/features/splash/presentation/view_model/splash_view_model.dart';
 
 final serviceLocator = GetIt.instance;
@@ -20,7 +25,10 @@ Future<void> initDependencies() async {
 }
 
 Future<void> _initHiveService() async {
-  serviceLocator.registerLazySingleton(() => HiveService());
+  final hiveService = HiveService();
+
+  await hiveService.init(); // This initializes Hive and registers adapters
+  serviceLocator.registerLazySingleton(() => hiveService);
 }
 
 Future<void> _initCore() async {
@@ -29,13 +37,27 @@ Future<void> _initCore() async {
     () => ApiService(serviceLocator<Dio>()),
   );
 
-  // serviceLocator.registerLazySingleton<SplashViewModel>(
-  //   () => SplashViewModel(),
-  // );
+  serviceLocator.registerLazySingleton(
+    () => SplashViewModel(hiveService: serviceLocator<HiveService>()),
+  );
 }
 
 Future<void> _initAuthModule() async {
-  // serviceLocator.registerLazySingleton<LoginViewModel>(() => LoginViewModel());
+  serviceLocator.registerFactory<LoginViewModel>(
+    () => LoginViewModel(LoginState.initial()),
+  );
+
+  serviceLocator.registerFactory<AuthRepository>(
+    () => AuthRepositoryImpl(hiveService: serviceLocator<HiveService>()),
+  );
+
+  serviceLocator.registerFactory<RegisterUseCase>(
+    () => RegisterUseCase(repository: serviceLocator<AuthRepository>()),
+  );
+
+  serviceLocator.registerFactory<SignupViewModel>(
+    () => SignupViewModel(useCase: serviceLocator<RegisterUseCase>()),
+  );
 }
 
 Future<void> _initJobModule() async {

@@ -47,45 +47,61 @@ class HiveService {
 
   // ─────────────────── PROFILE ───────────────────
   Future<void> saveProfile(ProfileHiveModel profile) async {
-    final box = await Hive.openBox<ProfileHiveModel>(HiveTableConstant.profileBox);
+    final box = await Hive.openBox<ProfileHiveModel>(
+      HiveTableConstant.profileBox,
+    );
     await box.put(profile.userId, profile);
   }
 
   Future<ProfileHiveModel?> getProfile(String id) async {
-    final box = await Hive.openBox<ProfileHiveModel>(HiveTableConstant.profileBox);
+    final box = await Hive.openBox<ProfileHiveModel>(
+      HiveTableConstant.profileBox,
+    );
     return box.get(id);
   }
 
   // ─────────────────── JOB POST ───────────────────
   Future<void> saveJobPost(JobPostHiveModel job) async {
-    final box = await Hive.openBox<JobPostHiveModel>(HiveTableConstant.jobPostBox);
+    final box = await Hive.openBox<JobPostHiveModel>(
+      HiveTableConstant.jobPostBox,
+    );
     await box.put(job.jobId, job);
   }
 
   Future<List<JobPostHiveModel>> getAllJobs() async {
-    final box = await Hive.openBox<JobPostHiveModel>(HiveTableConstant.jobPostBox);
+    final box = await Hive.openBox<JobPostHiveModel>(
+      HiveTableConstant.jobPostBox,
+    );
     return box.values.toList();
   }
 
   // ─────────────────── SAVED JOBS ───────────────────
   Future<void> saveJob(SavedJobHiveModel savedJob) async {
-    final box = await Hive.openBox<SavedJobHiveModel>(HiveTableConstant.savedJobBox);
+    final box = await Hive.openBox<SavedJobHiveModel>(
+      HiveTableConstant.savedJobBox,
+    );
     await box.put(savedJob.savedId, savedJob);
   }
 
   Future<List<SavedJobHiveModel>> getSavedJobs() async {
-    final box = await Hive.openBox<SavedJobHiveModel>(HiveTableConstant.savedJobBox);
+    final box = await Hive.openBox<SavedJobHiveModel>(
+      HiveTableConstant.savedJobBox,
+    );
     return box.values.toList();
   }
 
   // ─────────────────── JOB APPLICATIONS ───────────────────
   Future<void> applyToJob(JobApplicationHiveModel app) async {
-    final box = await Hive.openBox<JobApplicationHiveModel>(HiveTableConstant.jobApplicationBox);
+    final box = await Hive.openBox<JobApplicationHiveModel>(
+      HiveTableConstant.jobApplicationBox,
+    );
     await box.put(app.applicationId, app);
   }
 
   Future<List<JobApplicationHiveModel>> getAllApplications() async {
-    final box = await Hive.openBox<JobApplicationHiveModel>(HiveTableConstant.jobApplicationBox);
+    final box = await Hive.openBox<JobApplicationHiveModel>(
+      HiveTableConstant.jobApplicationBox,
+    );
     return box.values.toList();
   }
 
