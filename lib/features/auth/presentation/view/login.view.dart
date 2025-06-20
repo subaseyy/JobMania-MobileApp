@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
 
+import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view/forgotpassword.view.dart';
+import 'package:jobmaniaapp/features/auth/presentation/view/signup.view.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
 import 'package:jobmaniaapp/features/home/presentation/view/main.view.dart';
-import 'package:jobmaniaapp/features/auth/presentation/view/signup.view.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_event.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_state.dart';
@@ -16,9 +16,20 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final loginBloc = context.read<LoginViewModel>();
+    return BlocProvider(
+      create: (_) => serviceLocator<LoginViewModel>(),
+      child: const _LoginViewBody(),
+    );
+  }
+}
+
+class _LoginViewBody extends StatelessWidget {
+  const _LoginViewBody();
+
+  @override
+  Widget build(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
 
     return Scaffold(
       body: SafeArea(
@@ -28,6 +39,10 @@ class LoginView extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const MainView()),
+              );
+            } else if (!state.isSuccess && !state.isLoading) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Invalid email or password')),
               );
             }
           },
@@ -97,7 +112,20 @@ class LoginView extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        loginBloc.add(
+                        final email = emailController.text.trim();
+                        final password = passwordController.text;
+
+                        if (email.isEmpty || password.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Please enter both email and password',
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+                        context.read<LoginViewModel>().add(
                           LoginWithEmailAndPasswordEvent(
                             context: context,
                             username: emailController.text.trim(),
@@ -133,13 +161,13 @@ class LoginView extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   Row(
-                    children: [
-                      const Expanded(child: Divider()),
-                      const Padding(
+                    children: const [
+                      Expanded(child: Divider()),
+                      Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text("Or continue with"),
                       ),
-                      const Expanded(child: Divider()),
+                      Expanded(child: Divider()),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -199,7 +227,7 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Widget _socialIcon(String assetPath) {
+  static Widget _socialIcon(String assetPath) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
