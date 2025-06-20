@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jobmaniaapp/features/auth/presentation/view/login.view.dart';
+import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_state.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
-
-import 'package:jobmaniaapp/features/home/presentation/view/main.view.dart';
 
 class SignupView extends StatefulWidget {
   const SignupView({super.key});
@@ -23,16 +23,20 @@ class _SignupViewState extends State<SignupView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocListener<SignupViewModel, bool>(
+        child: BlocListener<SignupViewModel, SignupState>(
           listener: (context, state) {
-            if (state) {
+            if (state.isSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Registration Successful')),
               );
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const MainView()),
+                MaterialPageRoute(builder: (_) => const LoginView()),
               );
+            } else if (state.errorMessage.isNotEmpty) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
             }
           },
           child: Padding(
@@ -124,8 +128,8 @@ class _SignupViewState extends State<SignupView> {
                         child: Text('Job Seeker'),
                       ),
                       DropdownMenuItem(
-                        value: 'employer',
-                        child: Text('Employer'),
+                        value: 'company',
+                        child: Text('Company'),
                       ),
                     ],
                     onChanged: (val) {
@@ -175,8 +179,8 @@ class _SignupViewState extends State<SignupView> {
                         }
 
                         context.read<SignupViewModel>().register(
-                          fullName,
                           email,
+                          fullName,
                           password,
                           selectedRole,
                         );
