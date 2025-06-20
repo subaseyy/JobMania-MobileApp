@@ -4,7 +4,7 @@ import '../entity/auth_entity.dart';
 class RegisterUseCase {
   final AuthRepository repository;
 
-  RegisterUseCase({required this.repository});
+  RegisterUseCase(Object object, {required this.repository});
 
   Future<void> execute(AuthEntity entity) async {
     await repository.register(entity);
