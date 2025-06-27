@@ -3,27 +3,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view/login.view.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
+import 'package:jobmaniaapp/core/network/hive_services.dart';
+import 'package:jobmaniaapp/features/home/presentation/view/main.view.dart';
 
 class SplashViewModel extends Cubit<void> {
-  SplashViewModel() : super(null);
+  final HiveService hiveService;
 
-  // Open Login View after 2 seconds
+  SplashViewModel({required this.hiveService}) : super(null);
+
   Future<void> init(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 2), () async {
-      // Open Login page or Onboarding Screen
+    final authList = await hiveService.getAllAuth();
+    final isLoggedIn = authList.isNotEmpty;
 
-      if (context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BlocProvider.value(
-                  value: serviceLocator<LoginViewModel>(),
-                  child: LoginView(),
-                ),
-          ),
-        );
-      }
-    });
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder:
+              (_) => BlocProvider(
+                create: (_) => serviceLocator<LoginViewModel>(),
+                child: const LoginView(),
+              ),
+        ),
+      );
+    }
   }
 }

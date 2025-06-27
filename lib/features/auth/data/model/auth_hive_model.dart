@@ -13,43 +13,59 @@ class AuthHiveModel extends Equatable {
   final String userId;
 
   @HiveField(1)
-  final String email;
+  final String fullName;
 
   @HiveField(2)
-  final String token;
+  final String email;
 
   @HiveField(3)
-  final String role; // jobseeker / employer / admin
+  final String token;
+
+  @HiveField(4)
+  final String password;
+
+  @HiveField(5)
+  final String role;
 
   AuthHiveModel({
     String? userId,
+    required this.fullName,
     required this.email,
+    required this.password,
     required this.token,
     required this.role,
   }) : userId = userId ?? const Uuid().v4();
 
-  // Initial default constructor
   const AuthHiveModel.initial()
     : userId = '',
+      fullName = '',
       email = '',
+      password = '',
       token = '',
       role = '';
 
-  // From Entity
   factory AuthHiveModel.fromEntity(AuthEntity entity) {
     return AuthHiveModel(
       userId: entity.userId,
+      fullName: entity.fullName,
       email: entity.email,
+      password: entity.password,
       token: entity.token,
       role: entity.role,
     );
   }
 
-  // To Entity
   AuthEntity toEntity() {
-    return AuthEntity(userId: userId, email: email, token: token, role: role);
+    return AuthEntity(
+      userId: userId,
+      fullName: fullName,
+      email: email,
+      password: password,
+      token: token,
+      role: role,
+    );
   }
 
   @override
-  List<Object?> get props => [userId, email, token, role];
+  List<Object?> get props => [userId, fullName, email, password, token, role];
 }
