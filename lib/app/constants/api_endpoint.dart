@@ -11,7 +11,7 @@ class ApiEndpoints {
   static const String serverAddress = "http://localhost:5050";
 
   static const String baseUrl = "$serverAddress/api/";
-  static const String imageUrl = "$baseUrl/uploads/";
+  static const String imageUrl = "$serverAddress";
 
   // Auth
   static const String login = "auth/login";
@@ -22,4 +22,6 @@ class ApiEndpoints {
   static const String changeEmailWithOtp = "auth/change-email";
   static const String verifyOtpForEmail = "auth/verify-email-otp";
   static const String profile = "users/profile";
+  static const String submitJobApplication = "jobApplications/apply";
+  static const String myApplication = "jobApplications/my-applications";
 }
