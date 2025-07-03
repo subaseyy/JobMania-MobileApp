@@ -1,14 +1,16 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+
 import 'package:jobmaniaapp/core/network/hive_services.dart';
 import 'package:jobmaniaapp/core/network/api_service.dart';
 
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
-
 import 'package:jobmaniaapp/features/auth/presentation/view_model/otpverification_view_model/otpVerification_view_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
+
 import 'package:jobmaniaapp/features/home/domain/use_case/get_few_jobs_usecase.dart';
 import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_view_model.dart';
+
 import 'package:jobmaniaapp/features/job/domain/repository/job_repository.dart';
 import 'package:jobmaniaapp/features/job/domain/repository/job_repository_impl.dart';
 
@@ -34,16 +36,22 @@ Future<void> _initHiveService() async {
 
 Future<void> _initCore() async {
   serviceLocator.registerLazySingleton(() => Dio());
+
   serviceLocator.registerLazySingleton<ApiService>(
     () => ApiService(serviceLocator<Dio>()),
   );
 
-  serviceLocator.registerLazySingleton(() => SplashViewModel());
+  serviceLocator.registerLazySingleton(
+    () => SplashViewModel(hiveService: serviceLocator<HiveService>()),
+  );
 }
 
 Future<void> _initAuthModule() async {
   serviceLocator.registerFactory<LoginViewModel>(
-    () => LoginViewModel(dio: serviceLocator<Dio>()),
+    () => LoginViewModel(
+      dio: serviceLocator<Dio>(),
+      hiveService: serviceLocator<HiveService>(),
+    ),
   );
 
   serviceLocator.registerLazySingleton<OtpVerificationViewModel>(
@@ -57,22 +65,28 @@ Future<void> _initAuthModule() async {
 
 Future<void> _initJobModule() async {
   serviceLocator.registerLazySingleton<JobRepository>(
-    () => JobRepositoryImpl(dio: serviceLocator()),
+    () => JobRepositoryImpl(dio: serviceLocator<Dio>()),
   );
-  serviceLocator.registerFactory(() => GetFewJobsUseCase(serviceLocator()));
+
   serviceLocator.registerFactory(
-    () => DashboardViewModel(getFewJobsUseCase: serviceLocator()),
+    () => GetFewJobsUseCase(serviceLocator<JobRepository>()),
+  );
+
+  serviceLocator.registerFactory(
+    () => DashboardViewModel(
+      getFewJobsUseCase: serviceLocator<GetFewJobsUseCase>(),
+    ),
   );
 }
 
 Future<void> _initProfileModule() async {
-  // Register Profile-related services and VMs here
+  // Register profile-related services/view models here
 }
 
 Future<void> _initSavedJobsModule() async {
-  // Register SavedJobs-related services and VMs here
+  // Register saved jobs-related services/view models here
 }
 
 Future<void> _initApplicationModule() async {
-  // Register Application-related services and VMs here
+  // Register job application-related services/view models here
 }
