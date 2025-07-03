@@ -35,6 +35,12 @@ class HiveService {
     await box.put(user.userId, user);
   }
 
+  Future<void> addAuth(AuthHiveModel user) async {
+    final box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.authBox);
+    await box.clear(); // Ensure only one auth entry
+    await box.put(user.userId, user);
+  }
+
   Future<void> deleteAuth(String id) async {
     final box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.authBox);
     await box.delete(id);
@@ -43,6 +49,11 @@ class HiveService {
   Future<List<AuthHiveModel>> getAllAuth() async {
     final box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.authBox);
     return box.values.toList();
+  }
+
+  Future<void> clearAuth() async {
+    final box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.authBox);
+    await box.clear();
   }
 
   // ─────────────────── PROFILE ───────────────────
