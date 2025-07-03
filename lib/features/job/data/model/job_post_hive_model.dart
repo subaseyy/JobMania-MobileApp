@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:jobmaniaapp/core/constants/hive_table_constant.dart';
-import 'package:jobmaniaapp/features/job/domain/entity/job_post_entity.dart';
+import 'package:jobmaniaapp/features/job/domain/entity/job_entity.dart';
 
 part 'job_post_hive_model.g.dart';
 

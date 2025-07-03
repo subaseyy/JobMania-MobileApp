@@ -23,5 +23,5 @@ class ApiEndpoints {
   static const String verifyOtpForEmail = "auth/verify-email-otp";
   static const String profile = "users/profile";
   static const String submitJobApplication = "jobApplications/apply";
-  static const String myApplication = "jobApplications/my-applications";
+  static const String allJobs = "jobs/jobs";
 }
