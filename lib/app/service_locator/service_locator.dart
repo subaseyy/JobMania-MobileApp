@@ -3,11 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:jobmaniaapp/core/network/hive_services.dart';
 import 'package:jobmaniaapp/core/network/api_service.dart';
 
-import 'package:jobmaniaapp/features/auth/data/repository/local_repository/auth_repository.dart';
-import 'package:jobmaniaapp/features/auth/data/repository/local_repository/auth_repository_impl.dart';
-import 'package:jobmaniaapp/features/auth/domain/use_case/register_usecase.dart';
-
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
+
+import 'package:jobmaniaapp/features/auth/presentation/view_model/otpverification_view_model/otpVerification_view_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
 
 import 'package:jobmaniaapp/features/splash/presentation/view_model/splash_view_model.dart';
@@ -26,7 +24,6 @@ Future<void> initDependencies() async {
 
 Future<void> _initHiveService() async {
   final hiveService = HiveService();
-
   await hiveService.init();
   serviceLocator.registerLazySingleton(() => hiveService);
 }
@@ -43,23 +40,16 @@ Future<void> _initCore() async {
 }
 
 Future<void> _initAuthModule() async {
-  serviceLocator.registerFactory<LoginViewModel>(
+  serviceLocator.registerLazySingleton<LoginViewModel>(
     () => LoginViewModel(hiveService: serviceLocator<HiveService>()),
   );
 
-  serviceLocator.registerFactory<AuthRepository>(
-    () => AuthLocalRepository(hiveService: serviceLocator<HiveService>()),
+  serviceLocator.registerLazySingleton<OtpVerificationViewModel>(
+    () => OtpVerificationViewModel(dio: serviceLocator<Dio>()),
   );
 
-  serviceLocator.registerFactory<RegisterUseCase>(
-    () => RegisterUseCase(Object, repository: serviceLocator<AuthRepository>()),
-  );
-
-  serviceLocator.registerFactory<SignupViewModel>(
-    () => SignupViewModel(
-      useCase: serviceLocator<RegisterUseCase>(),
-      hiveService: serviceLocator<HiveService>(),
-    ),
+  serviceLocator.registerLazySingleton<SignupViewModel>(
+    () => SignupViewModel(dio: serviceLocator<Dio>()),
   );
 }
 
