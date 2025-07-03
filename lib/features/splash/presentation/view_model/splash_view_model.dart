@@ -2,27 +2,28 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jobmaniaapp/features/home/presentation/view/main.view.dart';
-import 'package:jobmaniaapp/features/auth/presentation/view/login.view.dart';
 import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
+import 'package:jobmaniaapp/core/network/hive_services.dart';
+
+import 'package:jobmaniaapp/features/auth/presentation/view/login.view.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
+import 'package:jobmaniaapp/core/common/main.view.dart';
 import 'package:jobmaniaapp/features/splash/presentation/view_model/biometric_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashViewModel extends Cubit<void> {
-  SplashViewModel() : super(null);
+  final HiveService hiveService;
+
+  SplashViewModel({required this.hiveService}) : super(null);
 
   Future<void> init(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2)); // Optional splash delay
 
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
+    final authUsers = await hiveService.getAllAuth();
 
     if (context.mounted) {
-      if (token != null && token.isNotEmpty) {
-        // 🔐 Biometric check
-        final auth = BiometricHelper();
-        final isAuthenticated = await auth.authenticate();
+      if (authUsers.isNotEmpty) {
+        final biometricHelper = BiometricHelper();
+        final isAuthenticated = await biometricHelper.authenticate();
 
         if (isAuthenticated) {
           Navigator.pushReplacement(
@@ -34,11 +35,11 @@ class SplashViewModel extends Cubit<void> {
             const SnackBar(content: Text('Biometric authentication failed')),
           );
 
-          // Exit the app
+          // Exit the app if biometric fails
           if (Platform.isAndroid) {
-            SystemNavigator.pop(); // Android
+            SystemNavigator.pop();
           } else if (Platform.isIOS) {
-            exit(0); // iOS
+            exit(0);
           }
         }
       } else {
