@@ -1,15 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:jobmaniaapp/core/network/hive_services.dart';
+import 'package:jobmaniaapp/features/auth/data/model/auth_hive_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_event.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_state.dart';
 import 'package:jobmaniaapp/app/constants/api_endpoint.dart';
 
 class LoginViewModel extends Bloc<LoginEvent, LoginState> {
   final Dio dio;
+  final HiveService hiveService;
 
-  LoginViewModel({required this.dio}) : super(LoginState.initial()) {
+  LoginViewModel({required this.dio, required this.hiveService})
+    : super(LoginState.initial()) {
     on<LoginWithEmailAndPasswordEvent>(_onLogin);
   }
 
@@ -30,14 +34,15 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        final token = data['token'];
-        final user = data['user'];
+        final String token = data['token'] ?? '';
+        final Map<String, dynamic> user = data['user'] ?? {};
 
         final String role = user['role'] ?? '';
         final String userId = user['id'] ?? '';
         final String email = user['email'] ?? '';
+        final String fullName = user['name'] ?? '';
 
-        // Restrict web-only roles
+        // 🚫 Prevent login for admin/company from mobile
         if (role == 'admin' || role == 'company') {
           emit(
             state.copyWith(
@@ -49,12 +54,26 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
           return;
         }
 
-        // Save to shared preferences
-        final prefs = await SharedPreferences.getInstance();
+        // 🐝 Save to Hive
+        final authHiveModel = AuthHiveModel(
+          userId: userId,
+          fullName: fullName,
+          email: email,
+          password: event.password,
+          token: token,
+          role: role,
+        );
+
+        await hiveService.clearAuth();
+        await hiveService.registerAuth(authHiveModel);
+
+        // 💾 Save to SharedPreferences
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
         await prefs.setString('user_id', userId);
         await prefs.setString('user_email', email);
         await prefs.setString('user_role', role);
+        await prefs.setString('fullName', fullName);
 
         emit(state.copyWith(isLoading: false, isSuccess: true));
       } else {
