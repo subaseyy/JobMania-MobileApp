@@ -34,14 +34,12 @@ Future<void> _initCore() async {
     () => ApiService(serviceLocator<Dio>()),
   );
 
-  serviceLocator.registerLazySingleton(
-    () => SplashViewModel(hiveService: serviceLocator<HiveService>()),
-  );
+  serviceLocator.registerLazySingleton(() => SplashViewModel());
 }
 
 Future<void> _initAuthModule() async {
-  serviceLocator.registerLazySingleton<LoginViewModel>(
-    () => LoginViewModel(hiveService: serviceLocator<HiveService>()),
+  serviceLocator.registerFactory<LoginViewModel>(
+    () => LoginViewModel(dio: serviceLocator<Dio>()),
   );
 
   serviceLocator.registerLazySingleton<OtpVerificationViewModel>(
