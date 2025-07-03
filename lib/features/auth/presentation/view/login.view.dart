@@ -6,7 +6,7 @@ import 'package:jobmaniaapp/features/auth/presentation/view/signup.view.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_event.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_state.dart';
-import 'package:jobmaniaapp/features/home/presentation/view/main.view.dart';
+import 'package:jobmaniaapp/core/common/main.view.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
 
 class LoginView extends StatelessWidget {
