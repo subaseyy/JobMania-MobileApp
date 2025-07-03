@@ -1,4 +1,3 @@
-import 'package:hive/hive.dart';
 import 'package:jobmaniaapp/core/constants/hive_table_constant.dart';
 import 'package:jobmaniaapp/core/network/hive_services.dart';
 import 'package:jobmaniaapp/features/auth/data/model/auth_hive_model.dart';
