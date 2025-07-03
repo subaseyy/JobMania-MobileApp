@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
+import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_view_model.dart';
 import 'package:jobmaniaapp/features/saved_jobs/presentation/view/saved.view.dart';
 import 'dashboard.view.dart';
 import 'inbox.view.dart';
@@ -15,11 +18,14 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    DashboardView(),
-    InboxView(),
-    SavedView(),
-    MoreView(),
+  final List<Widget> _pages = [
+    BlocProvider(
+      create: (_) => serviceLocator<DashboardViewModel>()..loadJobs(),
+      child: const DashboardView(),
+    ),
+    const InboxView(),
+    const SavedView(),
+    const MoreView(),
   ];
 
   @override
