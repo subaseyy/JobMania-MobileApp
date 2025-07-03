@@ -2,12 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jobmaniaapp/features/job/domain/entity/job_entity.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_view_model.dart';
 import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_state.dart';
 
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
+
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  String fullName = 'User';
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFullName();
+  }
+
+  Future<void> _loadFullName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fullName = prefs.getString('fullName') ?? 'User';
+    });
+  }
+
+  List<JobPostEntity> _filterJobs(List<JobPostEntity> jobs) {
+    if (_searchQuery.isEmpty) return jobs;
+
+    return jobs.where((job) {
+      final q = _searchQuery.toLowerCase();
+      return job.title.toLowerCase().contains(q) ||
+          job.company.toLowerCase().contains(q) ||
+          job.location.toLowerCase().contains(q);
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,27 +55,37 @@ class DashboardView extends StatelessWidget {
           return Center(child: Text('Error: ${state.error}'));
         }
 
+        final filteredJobs = _filterJobs(state.jobs);
+
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: ListView(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _header(fullName),
                 const SizedBox(height: 24),
-                _header(),
-                const SizedBox(height: 24),
-                _searchBar(context),
+                _searchBar(),
+                const SizedBox(height: 32),
+                _sectionHeader(context, 'Browse by Category'),
+                const SizedBox(height: 16),
+                _categoryRow(),
                 const SizedBox(height: 32),
                 _sectionHeader(context, 'Featured Jobs'),
                 const SizedBox(height: 16),
-                if (state.jobs.isNotEmpty)
-                  _featuredJobCard(context, state.jobs.first)
+                if (filteredJobs.isNotEmpty)
+                  _featuredJobCard(context, filteredJobs.first)
                 else
-                  const Text('No jobs available.'),
+                  const Text('No matching jobs found.'),
                 const SizedBox(height: 32),
                 _sectionHeader(context, 'Recommended Jobs'),
                 const SizedBox(height: 16),
-                _recommendedJobsRow(context, state.jobs),
+                _recommendedJobsRow(context, filteredJobs),
                 const SizedBox(height: 32),
+                _sectionHeader(context, 'Popular Companies'),
+                const SizedBox(height: 16),
+                _popularCompaniesRow(),
+                const SizedBox(height: 48),
               ],
             ),
           ),
@@ -50,25 +94,25 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  Widget _header() {
+  Widget _header(String fullName) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
+      children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Welcome Back!',
               style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
-              'Subas Kandel',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              fullName,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
         ),
-        CircleAvatar(
+        const CircleAvatar(
           radius: 24,
           backgroundImage: NetworkImage(
             'https://avatars.githubusercontent.com/u/67955251?v=4',
@@ -78,7 +122,7 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  Widget _searchBar(BuildContext context) {
+  Widget _searchBar() {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -86,12 +130,18 @@ class DashboardView extends StatelessWidget {
         color: theme.colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const TextField(
-        decoration: InputDecoration(
+      child: TextField(
+        controller: _searchController,
+        decoration: const InputDecoration(
           icon: Icon(Icons.search),
           hintText: "Search a job or position",
           border: InputBorder.none,
         ),
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value;
+          });
+        },
       ),
     );
   }
@@ -108,6 +158,7 @@ class DashboardView extends StatelessWidget {
 
   Widget _featuredJobCard(BuildContext context, JobPostEntity job) {
     final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -162,43 +213,119 @@ class DashboardView extends StatelessWidget {
 
   Widget _recommendedJobsRow(BuildContext context, List<JobPostEntity> jobs) {
     final theme = Theme.of(context);
-    final displayedJobs = jobs.skip(1).take(2).toList();
 
-    return Row(
-      children:
-          displayedJobs.map((job) {
-            return Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(24),
+    if (jobs.isEmpty) {
+      return const Text('No recommended jobs found.');
+    }
+
+    return SizedBox(
+      height: 200,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: jobs.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final job = jobs[index];
+          return Container(
+            width: 220,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(LucideIcons.briefcase, size: 36),
+                const SizedBox(height: 12),
+                Text(job.title, style: theme.textTheme.titleMedium),
+                const SizedBox(height: 4),
+                Text(
+                  job.company,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[700],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    const Icon(LucideIcons.briefcase, size: 36),
-                    const SizedBox(height: 12),
-                    Text(job.title, style: theme.textTheme.titleMedium),
-                    const SizedBox(height: 4),
-                    Text(
-                      job.company,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${job.currency} ${job.salaryMin?.toStringAsFixed(0) ?? '—'}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                const Spacer(),
+                Text(
+                  '${job.currency} ${job.salaryMin?.toStringAsFixed(0) ?? '—'}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _categoryRow() {
+    final categories = [
+      'Design',
+      'Development',
+      'Marketing',
+      'Sales',
+      'Human Resources',
+    ];
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: categories.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          return Chip(
+            label: Text(categories[index]),
+            backgroundColor: Colors.grey[200],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _popularCompaniesRow() {
+    final companies = [
+      {'name': 'Google', 'logo': LucideIcons.globe},
+      {'name': 'Meta', 'logo': LucideIcons.facebook},
+      {'name': 'Netflix', 'logo': LucideIcons.tv},
+      {'name': 'Apple', 'logo': LucideIcons.apple},
+      {'name': 'Netlify', 'logo': LucideIcons.network},
+      {'name': 'Spotify', 'logo': LucideIcons.music},
+      {'name': 'Youtube', 'logo': LucideIcons.youtube},
+      {'name': 'Maps', 'logo': LucideIcons.navigation},
+    ];
+
+    return SizedBox(
+      height: 110,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: companies.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 16),
+        itemBuilder: (context, index) {
+          final item = companies[index];
+          return Container(
+            width: 100,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(item['logo'] as IconData, size: 32),
+                const SizedBox(height: 8),
+                Text(
+                  item['name'] as String,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
