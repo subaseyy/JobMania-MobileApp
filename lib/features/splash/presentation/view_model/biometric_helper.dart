@@ -19,7 +19,7 @@ class BiometricHelper {
       return await _auth.authenticate(
         localizedReason: 'Please authenticate to proceed',
         options: const AuthenticationOptions(
-          biometricOnly: true,
+          biometricOnly: false,
           stickyAuth: true,
         ),
       );
