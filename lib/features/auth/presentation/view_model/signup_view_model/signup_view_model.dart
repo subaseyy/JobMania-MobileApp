@@ -1,19 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:jobmaniaapp/core/constants/hive_table_constant.dart';
-import 'package:jobmaniaapp/features/auth/data/model/auth_hive_model.dart';
-import 'package:jobmaniaapp/features/auth/domain/use_case/register_usecase.dart';
-import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_state.dart';
-import 'package:uuid/uuid.dart';
-import '../../../domain/entity/auth_entity.dart';
-import 'package:jobmaniaapp/core/network/hive_services.dart';
+import 'package:dio/dio.dart';
+import 'package:jobmaniaapp/app/constants/api_endpoint.dart';
+import 'signup_state.dart';
 
 class SignupViewModel extends Cubit<SignupState> {
-  final RegisterUseCase useCase;
-  final HiveService hiveService;
+  final Dio dio;
 
-  SignupViewModel({required this.useCase, required this.hiveService})
-    : super(SignupState.initial());
+  SignupViewModel({required this.dio}) : super(SignupState.initial());
 
   Future<void> register(
     String email,
@@ -21,45 +14,61 @@ class SignupViewModel extends Cubit<SignupState> {
     String password,
     String role,
   ) async {
-    emit(state.copyWith(isLoading: true, errorMessage: '', isSuccess: false));
+    if (!isClosed) {
+      emit(state.copyWith(isLoading: true, errorMessage: '', isSuccess: false));
+    }
 
-    final existingUsers = await hiveService.getAllAuth();
-    final isDuplicate = existingUsers.any((user) => user.email == email);
-
-    if (isDuplicate) {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: 'Email is already registered.',
-          isSuccess: false,
-        ),
+    try {
+      final response = await dio.post(
+        '${ApiEndpoints.baseUrl}${ApiEndpoints.signup}',
+        data: {
+          "email": email,
+          "full_name": fullName,
+          "password": password,
+          "role": role,
+        },
       );
-      return;
+
+      if (!isClosed) {
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          emit(state.copyWith(isLoading: false, isSuccess: true));
+        } else {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'Unexpected error: ${response.statusCode}',
+              isSuccess: false,
+            ),
+          );
+        }
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      final errorMessage =
+          responseData is Map<String, dynamic> &&
+                  responseData.containsKey('message')
+              ? responseData['message'].toString()
+              : 'Something went wrong during signup.';
+
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: errorMessage,
+            isSuccess: false,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Unexpected error: $e',
+            isSuccess: false,
+          ),
+        );
+      }
     }
-
-    final entity = AuthEntity(
-      userId: const Uuid().v4(),
-      email: email,
-      password: password,
-      token: generateMockToken(),
-      role: role,
-      fullName: fullName,
-    );
-
-    final box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.authBox);
-    final all = box.values.toList();
-
-    for (var user in all) {
-      print("Email: ${user.email}, Password: ${user.password}");
-    }
-
-    await useCase.execute(entity);
-
-    emit(state.copyWith(isLoading: false, errorMessage: '', isSuccess: true));
   }
-}
-
-String generateMockToken() {
-  var uuid = Uuid();
-  return 'user_${uuid.v4()}';
 }
