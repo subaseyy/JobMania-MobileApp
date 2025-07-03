@@ -12,6 +12,7 @@ class JobPostEntity extends Equatable {
   final double? salaryMax;
   final String currency;
   final List<String> requirements;
+  
 
   const JobPostEntity({
     required this.jobId,
