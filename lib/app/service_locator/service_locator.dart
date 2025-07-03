@@ -7,6 +7,10 @@ import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_mod
 
 import 'package:jobmaniaapp/features/auth/presentation/view_model/otpverification_view_model/otpVerification_view_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/signup_view_model/signup_view_model.dart';
+import 'package:jobmaniaapp/features/home/domain/use_case/get_few_jobs_usecase.dart';
+import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_view_model.dart';
+import 'package:jobmaniaapp/features/job/domain/repository/job_repository.dart';
+import 'package:jobmaniaapp/features/job/domain/repository/job_repository_impl.dart';
 
 import 'package:jobmaniaapp/features/splash/presentation/view_model/splash_view_model.dart';
 
@@ -52,7 +56,13 @@ Future<void> _initAuthModule() async {
 }
 
 Future<void> _initJobModule() async {
-  // Register Job-related services and VMs here
+  serviceLocator.registerLazySingleton<JobRepository>(
+    () => JobRepositoryImpl(dio: serviceLocator()),
+  );
+  serviceLocator.registerFactory(() => GetFewJobsUseCase(serviceLocator()));
+  serviceLocator.registerFactory(
+    () => DashboardViewModel(getFewJobsUseCase: serviceLocator()),
+  );
 }
 
 Future<void> _initProfileModule() async {
