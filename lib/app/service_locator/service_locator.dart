@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:jobmaniaapp/app/constants/api_endpoint.dart';
 
 import 'package:jobmaniaapp/core/network/hive_services.dart';
 import 'package:jobmaniaapp/core/network/api_service.dart';
@@ -15,6 +16,15 @@ import 'package:jobmaniaapp/features/job/domain/repository/job_repository.dart';
 import 'package:jobmaniaapp/features/job/domain/repository/job_repository_impl.dart';
 
 import 'package:jobmaniaapp/features/splash/presentation/view_model/splash_view_model.dart';
+import 'package:jobmaniaapp/features/user/data/data_source/local_data_source/profile_local_datasource.dart';
+import 'package:jobmaniaapp/features/user/data/data_source/remote_data_source/profile_remote_data_source.dart';
+import 'package:jobmaniaapp/features/user/data/repository/local_repository/user_profile_local_repository_impl.dart';
+import 'package:jobmaniaapp/features/user/data/repository/remote_datasource/user_profile_remote_repository_impl.dart';
+
+import 'package:jobmaniaapp/features/user/domain/repository/user_profile_repository.dart';
+import 'package:jobmaniaapp/features/user/domain/use_case/get_profile_use_case.dart';
+import 'package:jobmaniaapp/features/user/presentation/view_model/profile_cubit.dart';
+import 'package:jobmaniaapp/features/user/presentation/view_model/profile_view_model.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -41,7 +51,7 @@ Future<void> _initCore() async {
     () => ApiService(serviceLocator<Dio>()),
   );
 
-  serviceLocator.registerLazySingleton(
+  serviceLocator.registerFactory(
     () => SplashViewModel(hiveService: serviceLocator<HiveService>()),
   );
 }
@@ -80,7 +90,27 @@ Future<void> _initJobModule() async {
 }
 
 Future<void> _initProfileModule() async {
-  // Register profile-related services/view models here
+  serviceLocator.registerLazySingleton(
+    () => ProfileRemoteDataSource(dio: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(() => ProfileLocalDataSource());
+
+  serviceLocator.registerLazySingleton<UserProfileRepository>(
+    () => UserProfileRemoteRepositoryImpl(remoteDataSource: serviceLocator()),
+    instanceName: "remote",
+  );
+
+  serviceLocator.registerLazySingleton<UserProfileRepository>(
+    () => UserProfileLocalRepositoryImpl(localDataSource: serviceLocator()),
+    instanceName: "local",
+  );
+
+  serviceLocator.registerFactory(
+    () => ProfileViewModel(
+      remoteRepo: serviceLocator<UserProfileRepository>(instanceName: "remote"),
+      localRepo: serviceLocator<UserProfileRepository>(instanceName: "local"),
+    ),
+  );
 }
 
 Future<void> _initSavedJobsModule() async {
