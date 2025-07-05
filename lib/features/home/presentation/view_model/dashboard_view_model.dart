@@ -13,7 +13,6 @@ class DashboardViewModel extends Cubit<DashboardState> {
     emit(state.copyWith(isLoading: true));
     try {
       final jobs = await getFewJobsUseCase();
-      print(jobs);
       emit(state.copyWith(isLoading: false, jobs: jobs));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
