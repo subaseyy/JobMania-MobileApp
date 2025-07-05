@@ -75,6 +75,25 @@ class ProfileHiveModel extends Equatable {
     required this.portfolio,
   }) : userId = userId ?? const Uuid().v4();
 
+  Map<String, dynamic> toJson() {
+    return {
+      "full_name": fullName,
+      "title": title,
+      "company": company,
+      "location": location,
+      "phone": phone,
+      "dob": dob,
+      "gender": gender,
+      "account_type": accountType,
+      "profile_picture": profilePicture,
+      "bg_image": bgImage,
+      "skills": skills,
+      "experience": experience.map((e) => e.toJson()).toList(),
+      "education": education.map((e) => e.toJson()).toList(),
+      "portfolio": portfolio.map((p) => p.toJson()).toList(),
+    };
+  }
+
   const ProfileHiveModel.initial()
     : userId = '',
       fullName = '',
