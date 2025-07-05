@@ -37,12 +37,12 @@ class EducationHiveModel extends Equatable {
   }) : id = id ?? const Uuid().v4();
 
   const EducationHiveModel.initial()
-      : id = '',
-        university = '',
-        degree = '',
-        duration = '',
-        description = '',
-        logo = '';
+    : id = '',
+      university = '',
+      degree = '',
+      duration = '',
+      description = '',
+      logo = '';
 
   factory EducationHiveModel.fromEntity(EducationEntity entity) {
     return EducationHiveModel(
@@ -66,6 +66,24 @@ class EducationHiveModel extends Equatable {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "university": university,
+      "degree": degree,
+      "duration": duration,
+      "description": description,
+      "logo": logo,
+    };
+  }
+
   @override
-  List<Object?> get props => [id, university, degree, duration, description, logo];
+  List<Object?> get props => [
+    id,
+    university,
+    degree,
+    duration,
+    description,
+    logo,
+  ];
 }
