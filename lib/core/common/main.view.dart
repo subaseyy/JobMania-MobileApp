@@ -5,9 +5,11 @@ import 'package:jobmaniaapp/features/application/presentation/view/appliedJobs.v
 import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_view_model.dart';
 import 'package:jobmaniaapp/features/job/presentation/view/allJobs.view.dart';
 import 'package:jobmaniaapp/features/saved_jobs/presentation/view/saved.view.dart';
-import '../../features/home/presentation/view/dashboard.view.dart';
+import 'package:jobmaniaapp/features/user/presentation/view_model/profile_view_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../features/user/presentation/view/profile.view.dart'; // You'll create this below
+import '../../features/home/presentation/view/dashboard.view.dart';
+import '../../features/user/presentation/view/profile.view.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});
@@ -19,21 +21,24 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    BlocProvider(
-      create: (_) => serviceLocator<DashboardViewModel>()..loadJobs(),
-      child: const DashboardView(),
-    ),
-    const AllJobsView(),
-    const AppliedJobsView(),
-    const SavedView(),
-    const ProfileView(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      BlocProvider(
+        create: (_) => serviceLocator<DashboardViewModel>()..loadJobs(),
+        child: const DashboardView(),
+      ),
+      const AllJobsView(),
+      const AppliedJobsView(),
+      const SavedView(),
+      BlocProvider(
+        create: (_) => serviceLocator<ProfileViewModel>(),
+        child: const ProfileView(),
+      ),
+    ];
+
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: IndexedStack(index: _currentIndex, children: pages),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
