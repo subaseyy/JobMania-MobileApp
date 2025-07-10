@@ -49,15 +49,15 @@ class ExperienceHiveModel extends Equatable {
   }) : id = id ?? const Uuid().v4();
 
   const ExperienceHiveModel.initial()
-      : id = '',
-        company = '',
-        role = '',
-        type = '',
-        location = '',
-        duration = '',
-        period = '',
-        description = '',
-        logo = '';
+    : id = '',
+      company = '',
+      role = '',
+      type = '',
+      location = '',
+      duration = '',
+      period = '',
+      description = '',
+      logo = '';
 
   factory ExperienceHiveModel.fromEntity(ExperienceEntity entity) {
     return ExperienceHiveModel(
@@ -87,6 +87,30 @@ class ExperienceHiveModel extends Equatable {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "company": company,
+      "role": role,
+      "type": type,
+      "location": location,
+      "duration": duration,
+      "period": period,
+      "description": description,
+      "logo": logo,
+    };
+  }
+
   @override
-  List<Object?> get props => [id, company, role, type, location, duration, period, description, logo];
+  List<Object?> get props => [
+    id,
+    company,
+    role,
+    type,
+    location,
+    duration,
+    period,
+    description,
+    logo,
+  ];
 }

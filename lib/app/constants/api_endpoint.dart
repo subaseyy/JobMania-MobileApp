@@ -8,7 +8,8 @@ class ApiEndpoints {
   // For Android Emulator
   //static const String serverAddress = "http://10.0.2.2:3000";
   // For iOS Simulator
-  static const String serverAddress = "http://localhost:5050";
+  // static const String serverAddress = "http://localhost:5050";
+  static const String serverAddress = "https://api.jobmania.subas.info.np";
 
   static const String baseUrl = "$serverAddress/api/";
   static const String imageUrl = "$serverAddress";

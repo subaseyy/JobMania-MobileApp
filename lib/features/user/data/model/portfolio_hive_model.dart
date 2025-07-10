@@ -59,6 +59,16 @@ class PortfolioHiveModel extends Equatable {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "title": title,
+      "description": description,
+      "image": image,
+      "link": link,
+    };
+  }
+
   @override
   List<Object?> get props => [id, title, description, image, link];
 }
