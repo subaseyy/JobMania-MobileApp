@@ -23,6 +23,20 @@ class ExperienceEntity extends Equatable {
     required this.logo,
   });
 
+  factory ExperienceEntity.fromJson(Map<String, dynamic> json) {
+    return ExperienceEntity(
+      id: json['_id'] ?? '',
+      company: json['company'] ?? '',
+      role: json['role'] ?? '',
+      type: json['type'] ?? '',
+      location: json['location'] ?? '',
+      duration: json['duration'] ?? '',
+      period: json['period'] ?? '',
+      description: json['description'] ?? '',
+      logo: json['logo'] ?? '',
+    );
+  }
+
   @override
   List<Object?> get props => [
     id,

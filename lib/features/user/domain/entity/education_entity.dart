@@ -17,6 +17,17 @@ class EducationEntity extends Equatable {
     required this.logo,
   });
 
+  factory EducationEntity.fromJson(Map<String, dynamic> json) {
+    return EducationEntity(
+      id: json['_id'] ?? '',
+      university: json['university'] ?? '',
+      degree: json['degree'] ?? '',
+      duration: json['duration'] ?? '',
+      description: json['description'] ?? '',
+      logo: json['logo'] ?? '',
+    );
+  }
+
   @override
   List<Object?> get props => [
     id,

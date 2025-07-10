@@ -15,6 +15,16 @@ class PortfolioEntity extends Equatable {
     required this.link,
   });
 
+  factory PortfolioEntity.fromJson(Map<String, dynamic> json) {
+    return PortfolioEntity(
+      id: json['_id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      image: json['image'] ?? '',
+      link: json['link'] ?? '',
+    );
+  }
+
   @override
   List<Object?> get props => [id, title, description, image, link];
 }

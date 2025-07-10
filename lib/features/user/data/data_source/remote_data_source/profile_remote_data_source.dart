@@ -1,6 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:jobmaniaapp/app/constants/api_endpoint.dart';
+import 'package:jobmaniaapp/features/user/data/model/education_hive_model.dart';
+import 'package:jobmaniaapp/features/user/data/model/experience_hive_model.dart';
+import 'package:jobmaniaapp/features/user/data/model/portfolio_hive_model.dart';
 import 'package:jobmaniaapp/features/user/data/model/profile_hive_model.dart';
+import 'package:jobmaniaapp/features/user/domain/entity/education_entity.dart';
+import 'package:jobmaniaapp/features/user/domain/entity/experience_entity.dart';
+import 'package:jobmaniaapp/features/user/domain/entity/portfolio_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileRemoteDataSource {
@@ -26,9 +32,13 @@ class ProfileRemoteDataSource {
       final user = data['user'];
       final profile = data['profile'];
 
+      final rawExperiences = profile['experiences'];
+      final rawEducation = profile['education'];
+      final rawPortfolios = profile['portfolios'];
+
       return ProfileHiveModel(
-        userId: user['_id'],
-        fullName: user['full_name'],
+        userId: profile['user'] ?? '',
+        fullName: profile['full_name'] ?? '',
         title: '',
         company: '',
         location: '',
@@ -39,9 +49,39 @@ class ProfileRemoteDataSource {
         profilePicture: profile['profile_picture'] ?? '',
         bgImage: profile['bg_image'] ?? '',
         skills: List<String>.from(profile['skills'] ?? []),
-        experience: const [],
-        education: const [],
-        portfolio: const [],
+
+        experience:
+            (rawExperiences is List)
+                ? rawExperiences
+                    .map(
+                      (e) =>
+                          ExperienceEntity.fromJson(e as Map<String, dynamic>),
+                    )
+                    .map((e) => ExperienceHiveModel.fromEntity(e))
+                    .toList()
+                : [],
+
+        education:
+            (rawEducation is List)
+                ? rawEducation
+                    .map(
+                      (e) =>
+                          EducationEntity.fromJson(e as Map<String, dynamic>),
+                    )
+                    .map((e) => EducationHiveModel.fromEntity(e))
+                    .toList()
+                : [],
+
+        portfolio:
+            (rawPortfolios is List)
+                ? rawPortfolios
+                    .map(
+                      (e) =>
+                          PortfolioEntity.fromJson(e as Map<String, dynamic>),
+                    )
+                    .map((e) => PortfolioHiveModel.fromEntity(e))
+                    .toList()
+                : [],
       );
     } else {
       throw Exception('Failed to fetch profile');
@@ -59,8 +99,12 @@ class ProfileRemoteDataSource {
 
       final data = model.toJson();
 
+      data['experience'] = model.experience.map((e) => e.toJson()).toList();
+      data['education'] = model.education.map((e) => e.toJson()).toList();
+      data['portfolio'] = model.portfolio.map((e) => e.toJson()).toList();
+
       await dio.put(
-        ApiEndpoints.profile,
+        '${ApiEndpoints.baseUrl}${ApiEndpoints.profile}',
         data: data,
         options: Options(
           headers: {
