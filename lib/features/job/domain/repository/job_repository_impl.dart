@@ -9,10 +9,23 @@ class JobRepositoryImpl implements JobRepository {
   JobRepositoryImpl({required this.dio});
 
   @override
-  @override
-  @override
-  Future<List<JobPostEntity>> getAllJobs() async {
-    final res = await dio.get('${ApiEndpoints.baseUrl}${ApiEndpoints.allJobs}');
+  Future<List<JobPostEntity>> getAllJobs({
+    int page = 1,
+    int limit = 10,
+    String? search,
+    Map<String, dynamic>? filters,
+  }) async {
+    final queryParams = {
+      'page': page.toString(),
+      'limit': limit.toString(),
+      if (search != null && search.isNotEmpty) 'search': search,
+      if (filters != null) ...filters,
+    };
+
+    final res = await dio.get(
+      '${ApiEndpoints.baseUrl}${ApiEndpoints.allJobs}',
+      queryParameters: queryParams,
+    );
 
     final data = res.data['data'] as List;
 
@@ -37,5 +50,15 @@ class JobRepositoryImpl implements JobRepository {
         requirements: requirements,
       );
     }).toList();
+  }
+
+  @override
+  Future<void> applyToJob(String jobId, Map<String, dynamic> formData) async {
+    final form = FormData.fromMap(formData);
+    await dio.post(
+      '${ApiEndpoints.baseUrl}/jobApplications/apply/$jobId',
+      data: form,
+      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+    );
   }
 }
