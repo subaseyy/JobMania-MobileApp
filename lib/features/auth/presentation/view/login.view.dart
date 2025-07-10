@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view/signup.view.dart';
@@ -61,7 +64,13 @@ class _LoginViewBodyState extends State<_LoginViewBody> {
                         const SizedBox(height: 24),
                         IconButton(
                           icon: const Icon(Icons.arrow_back),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            if (Platform.isAndroid) {
+                              SystemNavigator.pop();
+                            } else if (Platform.isIOS) {
+                              exit(0);
+                            }
+                          },
                         ),
                         const SizedBox(height: 24),
                         Text(
