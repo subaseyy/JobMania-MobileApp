@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:jobmaniaapp/app/constants/api_endpoint.dart';
+import 'package:jobmaniaapp/features/job/data/model/job_post_hive_model.dart';
 import 'package:jobmaniaapp/features/job/domain/entity/job_entity.dart';
 import 'package:jobmaniaapp/features/job/domain/repository/job_repository.dart';
 
 class JobRepositoryImpl implements JobRepository {
   final Dio dio;
 
-  JobRepositoryImpl({required this.dio});
+  JobRepositoryImpl(this.dio);
 
   @override
   Future<List<JobPostEntity>> getAllJobs({
@@ -60,5 +61,19 @@ class JobRepositoryImpl implements JobRepository {
       data: form,
       options: Options(headers: {'Content-Type': 'multipart/form-data'}),
     );
+  }
+
+  @override
+  Future<JobPostEntity> getJobById(String id) async {
+    final response = await dio.get(
+      '${ApiEndpoints.baseUrl}${ApiEndpoints.myjobs}',
+    );
+
+    if (response.statusCode == 200) {
+      final data = response.data['data'];
+      return JobPostHiveModel.fromJson(data).toEntity(); // Map to entity
+    } else {
+      throw Exception('Failed to fetch job details');
+    }
   }
 }

@@ -23,22 +23,27 @@ class ProfileHiveModelAdapter extends TypeAdapter<ProfileHiveModel> {
       company: fields[3] as String,
       location: fields[4] as String,
       phone: fields[5] as String,
-      dob: fields[6] as String,
-      gender: fields[7] as String,
-      accountType: fields[8] as String,
       profilePicture: fields[9] as String,
       bgImage: fields[10] as String,
       skills: (fields[11] as List).cast<String>(),
       experience: (fields[12] as List).cast<ExperienceHiveModel>(),
       education: (fields[13] as List).cast<EducationHiveModel>(),
       portfolio: (fields[14] as List).cast<PortfolioHiveModel>(),
+      about: fields[15] as String,
+      email: fields[16] as String,
+      languages: fields[17] as String,
+      instagram: fields[18] as String,
+      twitter: fields[19] as String,
+      website: fields[20] as String,
+      createdAt: fields[21] as String,
+      updatedAt: fields[22] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProfileHiveModel obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
@@ -51,12 +56,6 @@ class ProfileHiveModelAdapter extends TypeAdapter<ProfileHiveModel> {
       ..write(obj.location)
       ..writeByte(5)
       ..write(obj.phone)
-      ..writeByte(6)
-      ..write(obj.dob)
-      ..writeByte(7)
-      ..write(obj.gender)
-      ..writeByte(8)
-      ..write(obj.accountType)
       ..writeByte(9)
       ..write(obj.profilePicture)
       ..writeByte(10)
@@ -68,7 +67,23 @@ class ProfileHiveModelAdapter extends TypeAdapter<ProfileHiveModel> {
       ..writeByte(13)
       ..write(obj.education)
       ..writeByte(14)
-      ..write(obj.portfolio);
+      ..write(obj.portfolio)
+      ..writeByte(15)
+      ..write(obj.about)
+      ..writeByte(16)
+      ..write(obj.email)
+      ..writeByte(17)
+      ..write(obj.languages)
+      ..writeByte(18)
+      ..write(obj.instagram)
+      ..writeByte(19)
+      ..write(obj.twitter)
+      ..writeByte(20)
+      ..write(obj.website)
+      ..writeByte(21)
+      ..write(obj.createdAt)
+      ..writeByte(22)
+      ..write(obj.updatedAt);
   }
 
   @override

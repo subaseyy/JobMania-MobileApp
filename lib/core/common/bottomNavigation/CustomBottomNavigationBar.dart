@@ -19,10 +19,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.mail_outline), label: 'Inbox'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.bookmark_outline),
-          label: 'Saved',
-        ),
+
         BottomNavigationBarItem(
           icon: Icon(Icons.grid_view_rounded),
           label: 'More',

@@ -115,4 +115,32 @@ class JobPostHiveModel extends Equatable {
     currency,
     requirements,
   ];
+
+  factory JobPostHiveModel.fromJson(Map<String, dynamic> json) {
+    final rawRequirements = json['requirements'];
+    final requirements =
+        (rawRequirements is List)
+            ? rawRequirements.map((item) => item.toString()).toList()
+            : <String>[];
+
+    return JobPostHiveModel(
+      jobId: json['_id'] ?? '',
+      employerId: json['employer'] ?? '',
+      title: json['title'] ?? '',
+      company: json['company'] ?? '',
+      description: json['description'] ?? '',
+      location: json['location'] ?? '',
+      type: json['type'] ?? '',
+      salaryMin:
+          json['salaryMin'] != null
+              ? (json['salaryMin'] as num).toDouble()
+              : null,
+      salaryMax:
+          json['salaryMax'] != null
+              ? (json['salaryMax'] as num).toDouble()
+              : null,
+      currency: json['currency'] ?? 'USD',
+      requirements: requirements,
+    );
+  }
 }

@@ -1,9 +1,13 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:http/src/client.dart';
 import 'package:jobmaniaapp/app/constants/api_endpoint.dart';
 
 import 'package:jobmaniaapp/core/network/hive_services.dart';
 import 'package:jobmaniaapp/core/network/api_service.dart';
+import 'package:jobmaniaapp/features/application/data/repository/job_application_repository_impl.dart';
+import 'package:jobmaniaapp/features/application/domain/repository/job_application_repository.dart';
+import 'package:jobmaniaapp/features/application/presentation/view_model/applied_jobs.viewmodel.dart';
 
 import 'package:jobmaniaapp/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:jobmaniaapp/features/auth/presentation/view_model/otpverification_view_model/otpVerification_view_model.dart';
@@ -22,8 +26,7 @@ import 'package:jobmaniaapp/features/user/data/repository/local_repository/user_
 import 'package:jobmaniaapp/features/user/data/repository/remote_datasource/user_profile_remote_repository_impl.dart';
 
 import 'package:jobmaniaapp/features/user/domain/repository/user_profile_repository.dart';
-import 'package:jobmaniaapp/features/user/domain/use_case/get_profile_use_case.dart';
-import 'package:jobmaniaapp/features/user/presentation/view_model/profile_cubit.dart';
+
 import 'package:jobmaniaapp/features/user/presentation/view_model/profile_view_model.dart';
 
 final serviceLocator = GetIt.instance;
@@ -34,7 +37,6 @@ Future<void> initDependencies() async {
   await _initAuthModule();
   await _initJobModule();
   await _initProfileModule();
-  await _initSavedJobsModule();
   await _initApplicationModule();
 }
 
@@ -75,7 +77,7 @@ Future<void> _initAuthModule() async {
 
 Future<void> _initJobModule() async {
   serviceLocator.registerLazySingleton<JobRepository>(
-    () => JobRepositoryImpl(dio: serviceLocator<Dio>()),
+    () => JobRepositoryImpl(serviceLocator<Dio>()),
   );
 
   serviceLocator.registerFactory(
@@ -113,10 +115,15 @@ Future<void> _initProfileModule() async {
   );
 }
 
-Future<void> _initSavedJobsModule() async {
-  // Register saved jobs-related services/view models here
-}
-
 Future<void> _initApplicationModule() async {
-  // Register job application-related services/view models here
+  serviceLocator.registerLazySingleton<JobApplicationRepository>(
+    () => JobApplicationRepositoryImpl(serviceLocator<Dio>()),
+  );
+
+  serviceLocator.registerFactory<AppliedJobsViewModel>(
+    () => AppliedJobsViewModel(
+      serviceLocator<JobApplicationRepository>(),
+      serviceLocator<JobRepository>(),
+    ),
+  );
 }

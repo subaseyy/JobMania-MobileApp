@@ -9,4 +9,5 @@ abstract class JobRepository {
   });
 
   Future<void> applyToJob(String jobId, Map<String, dynamic> formData);
+  Future<JobPostEntity> getJobById(String jobId);
 }

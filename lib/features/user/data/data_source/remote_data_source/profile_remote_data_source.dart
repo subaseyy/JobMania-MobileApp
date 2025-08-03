@@ -39,25 +39,32 @@ class ProfileRemoteDataSource {
       return ProfileHiveModel(
         userId: profile['user'] ?? '',
         fullName: profile['full_name'] ?? '',
-        title: '',
-        company: '',
-        location: '',
+        title: profile['title'] ?? '',
+        company: profile['company'] ?? '',
+        location: profile['location'] ?? '',
         phone: profile['contact_number'] ?? '',
-        dob: '',
-        gender: '',
-        accountType: user['role'] ?? '',
+    
         profilePicture: profile['profile_picture'] ?? '',
         bgImage: profile['bg_image'] ?? '',
         skills: List<String>.from(profile['skills'] ?? []),
+
+        email: profile['email'] ?? '',
+        about: profile['about'] ?? '',
+        languages: profile['languages'] ?? '',
+        instagram: profile['instagram'] ?? '',
+        twitter: profile['twitter'] ?? '',
+        website: profile['website'] ?? '',
+        createdAt: profile['created_at'] ?? '',
+        updatedAt: profile['updated_at'] ?? '',
 
         experience:
             (rawExperiences is List)
                 ? rawExperiences
                     .map(
-                      (e) =>
-                          ExperienceEntity.fromJson(e as Map<String, dynamic>),
+                      (e) => ExperienceHiveModel.fromEntity(
+                        ExperienceEntity.fromJson(e),
+                      ),
                     )
-                    .map((e) => ExperienceHiveModel.fromEntity(e))
                     .toList()
                 : [],
 
@@ -65,10 +72,10 @@ class ProfileRemoteDataSource {
             (rawEducation is List)
                 ? rawEducation
                     .map(
-                      (e) =>
-                          EducationEntity.fromJson(e as Map<String, dynamic>),
+                      (e) => EducationHiveModel.fromEntity(
+                        EducationEntity.fromJson(e),
+                      ),
                     )
-                    .map((e) => EducationHiveModel.fromEntity(e))
                     .toList()
                 : [],
 
@@ -76,10 +83,10 @@ class ProfileRemoteDataSource {
             (rawPortfolios is List)
                 ? rawPortfolios
                     .map(
-                      (e) =>
-                          PortfolioEntity.fromJson(e as Map<String, dynamic>),
+                      (e) => PortfolioHiveModel.fromEntity(
+                        PortfolioEntity.fromJson(e),
+                      ),
                     )
-                    .map((e) => PortfolioHiveModel.fromEntity(e))
                     .toList()
                 : [],
       );

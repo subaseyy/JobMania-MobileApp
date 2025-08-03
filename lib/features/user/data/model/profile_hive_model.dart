@@ -30,14 +30,6 @@ class ProfileHiveModel extends Equatable {
   @HiveField(5)
   final String phone;
 
-  @HiveField(6)
-  final String dob;
-
-  @HiveField(7)
-  final String gender;
-
-  @HiveField(8)
-  final String accountType;
 
   @HiveField(9)
   final String profilePicture;
@@ -57,6 +49,30 @@ class ProfileHiveModel extends Equatable {
   @HiveField(14)
   final List<PortfolioHiveModel> portfolio;
 
+  @HiveField(15)
+  final String about;
+
+  @HiveField(16)
+  final String email;
+
+  @HiveField(17)
+  final String languages;
+
+  @HiveField(18)
+  final String instagram;
+
+  @HiveField(19)
+  final String twitter;
+
+  @HiveField(20)
+  final String website;
+
+  @HiveField(21)
+  final String createdAt;
+
+  @HiveField(22)
+  final String updatedAt;
+
   ProfileHiveModel({
     String? userId,
     required this.fullName,
@@ -64,52 +80,22 @@ class ProfileHiveModel extends Equatable {
     required this.company,
     required this.location,
     required this.phone,
-    required this.dob,
-    required this.gender,
-    required this.accountType,
+
     required this.profilePicture,
     required this.bgImage,
     required this.skills,
     required this.experience,
     required this.education,
     required this.portfolio,
+    required this.about,
+    required this.email,
+    required this.languages,
+    required this.instagram,
+    required this.twitter,
+    required this.website,
+    required this.createdAt,
+    required this.updatedAt,
   }) : userId = userId ?? const Uuid().v4();
-
-  Map<String, dynamic> toJson() {
-    return {
-      "full_name": fullName,
-      "title": title,
-      "company": company,
-      "location": location,
-      "phone": phone,
-      "dob": dob,
-      "gender": gender,
-      "account_type": accountType,
-      "profile_picture": profilePicture,
-      "bg_image": bgImage,
-      "skills": skills,
-      "experience": experience.map((e) => e.toJson()).toList(),
-      "education": education.map((e) => e.toJson()).toList(),
-      "portfolio": portfolio.map((p) => p.toJson()).toList(),
-    };
-  }
-
-  const ProfileHiveModel.initial()
-    : userId = '',
-      fullName = '',
-      title = '',
-      company = '',
-      location = '',
-      phone = '',
-      dob = '',
-      gender = '',
-      accountType = '',
-      profilePicture = '',
-      bgImage = '',
-      skills = const [],
-      experience = const [],
-      education = const [],
-      portfolio = const [];
 
   factory ProfileHiveModel.fromEntity(ProfileEntity entity) {
     return ProfileHiveModel(
@@ -119,9 +105,7 @@ class ProfileHiveModel extends Equatable {
       company: entity.company,
       location: entity.location,
       phone: entity.phone,
-      dob: entity.dob,
-      gender: entity.gender,
-      accountType: entity.accountType,
+
       profilePicture: entity.profilePicture,
       bgImage: entity.bgImage,
       skills: entity.skills,
@@ -137,6 +121,14 @@ class ProfileHiveModel extends Equatable {
           entity.portfolio
               .map((e) => PortfolioHiveModel.fromEntity(e))
               .toList(),
+      about: entity.about,
+      email: entity.email,
+      languages: entity.languages,
+      instagram: entity.instagram,
+      twitter: entity.twitter,
+      website: entity.website,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt, 
     );
   }
 
@@ -148,15 +140,21 @@ class ProfileHiveModel extends Equatable {
       company: company,
       location: location,
       phone: phone,
-      dob: dob,
-      gender: gender,
-      accountType: accountType,
+
       profilePicture: profilePicture,
       bgImage: bgImage,
       skills: skills,
       experience: experience.map((e) => e.toEntity()).toList(),
       education: education.map((e) => e.toEntity()).toList(),
       portfolio: portfolio.map((e) => e.toEntity()).toList(),
+      about: about,
+      email: email,
+      languages: languages,
+      instagram: instagram,
+      twitter: twitter,
+      website: website,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 
@@ -168,14 +166,38 @@ class ProfileHiveModel extends Equatable {
     company,
     location,
     phone,
-    dob,
-    gender,
-    accountType,
+
     profilePicture,
     bgImage,
     skills,
     experience,
     education,
     portfolio,
+    about,
+    email,
+    languages,
+    instagram,
+    twitter,
+    website,
+    createdAt,
+    updatedAt,
   ];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user': userId,
+      'full_name': fullName,
+      'title': title,
+      'company': company,
+      'location': location,
+      'contact_number': phone,
+
+      'profile_picture': profilePicture,
+      'bg_image': bgImage,
+      'skills': skills,
+      'experience': experience.map((e) => e.toJson()).toList(),
+      'education': education.map((e) => e.toJson()).toList(),
+      'portfolio': portfolio.map((e) => e.toJson()).toList(),
+    };
+  }
 }

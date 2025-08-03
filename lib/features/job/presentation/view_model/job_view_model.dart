@@ -68,4 +68,6 @@ class JobViewModel extends ChangeNotifier {
   }
 
   bool get isLoadingMore => _isLoading && _page > 1;
+
+  void refresh() {}
 }

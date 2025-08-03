@@ -22,23 +22,20 @@ class _ProfileViewState extends State<ProfileView> {
   bool eduExpanded = false, expExpanded = false, portExpanded = false;
   bool isEditing = false;
 
-  late TextEditingController titleController;
-  late TextEditingController phoneController;
-  late TextEditingController locationController;
-  late TextEditingController companyController;
+  // Initialize controllers immediately to avoid LateInitializationError
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController companyController = TextEditingController();
+  final TextEditingController profilePictureController =
+      TextEditingController();
+  final TextEditingController bgImageController = TextEditingController();
+  final TextEditingController skillsController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _initControllers();
     _loadProfile();
-  }
-
-  void _initControllers() {
-    titleController = TextEditingController();
-    phoneController = TextEditingController();
-    locationController = TextEditingController();
-    companyController = TextEditingController();
   }
 
   Future<void> _loadProfile() async {
@@ -74,16 +71,25 @@ class _ProfileViewState extends State<ProfileView> {
   void _toggleEdit(ProfileEntity profile) {
     setState(() {
       if (!isEditing) {
+        // Populate controllers with current profile data for editing
         titleController.text = profile.title;
-        phoneController.text = profile.phone;
+
         locationController.text = profile.location;
         companyController.text = profile.company;
+        profilePictureController.text = profile.profilePicture;
+        bgImageController.text = profile.bgImage;
+        skillsController.text = profile.skills.join(', ');
       } else {
-        final updated = profile.copyWith(
+        // On save, update the profile entity and call update method
+        final updated = ProfileEntityCopyWith(profile).copyWith(
           title: titleController.text,
-          phone: phoneController.text,
+
           location: locationController.text,
           company: companyController.text,
+          profilePicture: profilePictureController.text,
+          bgImage: bgImageController.text,
+          skills:
+              skillsController.text.split(',').map((s) => s.trim()).toList(),
         );
         context.read<ProfileViewModel>().updateProfile(updated);
       }
@@ -94,32 +100,21 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void dispose() {
     titleController.dispose();
-    phoneController.dispose();
+
     locationController.dispose();
     companyController.dispose();
+    profilePictureController.dispose();
+    bgImageController.dispose();
+    skillsController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-        actions: [
-          BlocBuilder<ProfileViewModel, ProfileEntity?>(
-            builder: (context, profile) {
-              if (profile == null) return const SizedBox();
-              return IconButton(
-                icon: Icon(isEditing ? Icons.save : Icons.edit),
-                onPressed: () => _toggleEdit(profile),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text("Profile")),
       body: BlocBuilder<ProfileViewModel, ProfileEntity?>(
         builder: (context, profile) {
-          print("profile: ${profile}");
           if (profile == null) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -142,12 +137,19 @@ class _ProfileViewState extends State<ProfileView> {
                   profile.location,
                   controller: locationController,
                 ),
-                _infoField("Phone", profile.phone, controller: phoneController),
-                _infoRow("Account Type", profile.accountType),
 
-                // _infoRow("Email", profile.email ?? "-"),
+                _infoField(
+                  "Skills",
+                  profile.skills.join(', '),
+                  controller: skillsController,
+                ),
                 const SizedBox(height: 24),
-
+                // _section(
+                //   "Education",
+                //   eduExpanded,
+                //   () => setState(() => eduExpanded = !eduExpanded),
+                //   profile.education.map((e) => Text(e.degree)).toList(),
+                // ),
                 _section(
                   "Education",
                   eduExpanded,
@@ -166,7 +168,6 @@ class _ProfileViewState extends State<ProfileView> {
                   () => setState(() => portExpanded = !portExpanded),
                   profile.portfolio.map((e) => Text(e.title)).toList(),
                 ),
-
                 const SizedBox(height: 32),
                 ElevatedButton(onPressed: _logout, child: const Text("Logout")),
               ],
@@ -243,9 +244,6 @@ extension ProfileEntityCopyWith on ProfileEntity {
     String? company,
     String? location,
     String? phone,
-    String? dob,
-    String? gender,
-    String? accountType,
     String? profilePicture,
     String? bgImage,
     List<String>? skills,
@@ -253,23 +251,36 @@ extension ProfileEntityCopyWith on ProfileEntity {
     List<ExperienceEntity>? experience,
     List<PortfolioEntity>? portfolio,
     String? email,
+    String? about,
+    String? languages,
+    String? instagram,
+    String? twitter,
+    String? website,
+    String? createdAt,
+    String? updatedAt,
   }) {
     return ProfileEntity(
+      userId: this.userId,
       fullName: fullName ?? this.fullName,
       title: title ?? this.title,
       company: company ?? this.company,
       location: location ?? this.location,
-      phone: phone ?? this.phone,
-      dob: dob ?? this.dob,
-      gender: gender ?? this.gender,
-      accountType: accountType ?? this.accountType,
+
       profilePicture: profilePicture ?? this.profilePicture,
       bgImage: bgImage ?? this.bgImage,
       skills: skills ?? this.skills,
       education: education ?? this.education,
       experience: experience ?? this.experience,
       portfolio: portfolio ?? this.portfolio,
-      userId: userId,
+      email: email ?? this.email,
+      about: about ?? this.about,
+      languages: languages ?? this.languages,
+      instagram: instagram ?? this.instagram,
+      twitter: twitter ?? this.twitter,
+      website: website ?? this.website,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      phone: '',
     );
   }
 }

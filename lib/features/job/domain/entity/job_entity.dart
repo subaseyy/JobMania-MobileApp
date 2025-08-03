@@ -42,4 +42,6 @@ class JobPostEntity extends Equatable {
     currency,
     requirements,
   ];
+
+  get id => null;
 }

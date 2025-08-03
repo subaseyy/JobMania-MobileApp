@@ -8,7 +8,7 @@ import 'package:jobmaniaapp/features/user/data/model/experience_hive_model.dart'
 import 'package:jobmaniaapp/features/user/data/model/education_hive_model.dart';
 import 'package:jobmaniaapp/features/user/data/model/portfolio_hive_model.dart';
 import 'package:jobmaniaapp/features/job/data/model/job_post_hive_model.dart';
-import 'package:jobmaniaapp/features/saved_jobs/data/model/saved_job_hive_model.dart';
+
 import 'package:jobmaniaapp/features/application/data/model/job_application_hive_model.dart';
 
 class HiveService {
@@ -25,8 +25,8 @@ class HiveService {
     Hive.registerAdapter(EducationHiveModelAdapter());
     Hive.registerAdapter(PortfolioHiveModelAdapter());
     Hive.registerAdapter(JobPostHiveModelAdapter());
-    Hive.registerAdapter(SavedJobHiveModelAdapter());
-    Hive.registerAdapter(JobApplicationHiveModelAdapter());
+
+    // Hive.registerAdapter(JobApplicationHiveModelAdapter());
   }
 
   // ─────────────────── AUTH ───────────────────
@@ -57,12 +57,6 @@ class HiveService {
   }
 
   // ─────────────────── PROFILE ───────────────────
-  Future<void> saveProfile(ProfileHiveModel profile) async {
-    final box = await Hive.openBox<ProfileHiveModel>(
-      HiveTableConstant.profileBox,
-    );
-    await box.put(profile.userId, profile);
-  }
 
   Future<ProfileHiveModel?> getProfile(String id) async {
     final box = await Hive.openBox<ProfileHiveModel>(
@@ -86,35 +80,20 @@ class HiveService {
     return box.values.toList();
   }
 
-  // ─────────────────── SAVED JOBS ───────────────────
-  Future<void> saveJob(SavedJobHiveModel savedJob) async {
-    final box = await Hive.openBox<SavedJobHiveModel>(
-      HiveTableConstant.savedJobBox,
-    );
-    await box.put(savedJob.savedId, savedJob);
-  }
+  // // ─────────────────── JOB APPLICATIONS ───────────────────
+  // Future<void> applyToJob(JobApplicationHiveModel app) async {
+  //   final box = await Hive.openBox<JobApplicationHiveModel>(
+  //     HiveTableConstant.jobApplicationBox,
+  //   );
+  //   await box.put(app.applicationId, app);
+  // }
 
-  Future<List<SavedJobHiveModel>> getSavedJobs() async {
-    final box = await Hive.openBox<SavedJobHiveModel>(
-      HiveTableConstant.savedJobBox,
-    );
-    return box.values.toList();
-  }
-
-  // ─────────────────── JOB APPLICATIONS ───────────────────
-  Future<void> applyToJob(JobApplicationHiveModel app) async {
-    final box = await Hive.openBox<JobApplicationHiveModel>(
-      HiveTableConstant.jobApplicationBox,
-    );
-    await box.put(app.applicationId, app);
-  }
-
-  Future<List<JobApplicationHiveModel>> getAllApplications() async {
-    final box = await Hive.openBox<JobApplicationHiveModel>(
-      HiveTableConstant.jobApplicationBox,
-    );
-    return box.values.toList();
-  }
+  // Future<List<JobApplicationHiveModel>> getAllApplications() async {
+  //   final box = await Hive.openBox<JobApplicationHiveModel>(
+  //     HiveTableConstant.jobApplicationBox,
+  //   );
+  //   return box.values.toList();
+  // }
 
   // ─────────────────── CLEANUP ───────────────────
   Future<void> clearAll() async {

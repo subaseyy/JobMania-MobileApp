@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
+import 'package:jobmaniaapp/features/application/domain/repository/job_application_repository.dart';
 import 'package:jobmaniaapp/features/application/presentation/view/appliedJobs.view.dart';
+import 'package:jobmaniaapp/features/application/presentation/view_model/applied_jobs.viewmodel.dart';
+import 'package:jobmaniaapp/features/application/presentation/view_model/applied_jobs_cubit.dart';
 import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_view_model.dart';
+import 'package:jobmaniaapp/features/job/domain/repository/job_repository.dart';
 import 'package:jobmaniaapp/features/job/presentation/view/allJobs.view.dart';
-import 'package:jobmaniaapp/features/saved_jobs/presentation/view/saved.view.dart';
+import 'package:provider/provider.dart';
+
 import 'package:jobmaniaapp/features/user/presentation/view_model/profile_view_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/home/presentation/view/dashboard.view.dart';
 import '../../features/user/presentation/view/profile.view.dart';
@@ -29,8 +33,14 @@ class _MainViewState extends State<MainView> {
         child: const DashboardView(),
       ),
       const AllJobsView(),
-      const AppliedJobsView(),
-      const SavedView(),
+      BlocProvider(
+        create:
+            (context) => AppliedJobsCubit(
+              serviceLocator<JobApplicationRepository>(),
+              serviceLocator<JobRepository>(),
+            )..fetchAppliedJobs(),
+        child: const AppliedJobsView(),
+      ),
       BlocProvider(
         create: (_) => serviceLocator<ProfileViewModel>(),
         child: const ProfileView(),
@@ -50,13 +60,10 @@ class _MainViewState extends State<MainView> {
             label: 'All Jobs',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.badge_rounded),
+            icon: Icon(Icons.save),
             label: 'Applied Jobs',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_outline),
-            label: 'Saved',
-          ),
+
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),

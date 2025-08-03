@@ -16,7 +16,7 @@ class JobApplicationEntity extends Equatable {
     required this.resume,
     required this.coverLetter,
     required this.status,
-    required this.appliedAt,
+    required this.appliedAt, required String id, required DateTime createdAt, required String userId,
   });
 
   @override
