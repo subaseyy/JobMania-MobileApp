@@ -11,6 +11,7 @@ class ApplyJobViewModel extends ChangeNotifier {
     String jobId,
     Map<String, dynamic> formData,
   ) async {
+
     isSubmitting = true;
     notifyListeners();
 

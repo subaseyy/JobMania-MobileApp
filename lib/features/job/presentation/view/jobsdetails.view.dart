@@ -631,7 +631,7 @@ class _JobDetailPageState extends State<JobDetailPage>
                       top: Radius.circular(20),
                     ),
                   ),
-                  child: ApplyJobForm(jobId: widget.job.jobId),
+                  child: ApplyJobForm(jobId: widget.job.jobId,),
                 ),
           );
         },

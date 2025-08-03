@@ -57,7 +57,7 @@ class JobRepositoryImpl implements JobRepository {
   Future<void> applyToJob(String jobId, Map<String, dynamic> formData) async {
     final form = FormData.fromMap(formData);
     await dio.post(
-      '${ApiEndpoints.baseUrl}/jobApplications/apply/$jobId',
+      '${ApiEndpoints.baseUrl}${ApiEndpoints.submitJobApplication}',
       data: form,
       options: Options(headers: {'Content-Type': 'multipart/form-data'}),
     );

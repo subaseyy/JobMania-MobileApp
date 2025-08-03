@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// ignore: depend_on_referenced_packages
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
+import 'package:jobmaniaapp/features/job/presentation/view_model/apply_job_view_model.dart';
+
 class ApplyJobForm extends StatefulWidget {
   final String jobId;
+  // final ApplyJobViewModel applyJobViewModel;
   const ApplyJobForm({super.key, required this.jobId});
 
   @override
@@ -26,6 +32,7 @@ class _ApplyJobFormState extends State<ApplyJobForm>
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  late final ApplyJobViewModel applyJobViewModel;
 
   PlatformFile? resumeFile;
   bool _isSubmitting = false;
@@ -120,24 +127,44 @@ class _ApplyJobFormState extends State<ApplyJobForm>
     HapticFeedback.mediumImpact();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final File file = File(resumeFile!.path!);
+      final bytes = await file.readAsBytes();
+      final base64Resume = base64Encode(bytes);
+
+      final formData = {
+        'full_name': fullName.text.trim(),
+        'email': email.text.trim(),
+        'phone': phone.text.trim(),
+        'current_title': currentTitle.text.trim(),
+        'linkedin': linkedin.text.trim(),
+        'portfolio': portfolio.text.trim(),
+        'additional_info': additionalInfo.text.trim(),
+        'resume_base64': base64Resume,
+        'resume_filename': resumeFile!.name,
+      };
+
+      print('Submit button pressed');
+
+      await applyJobViewModel.submitApplication(widget.jobId, formData);
+
+      print('Submitted successfully');
 
       if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
-        _showSuccessDialog();
+        _showSuccessDialog(); // Only show success if no exception
       }
     } catch (e) {
+      print('Error during submit: $e');
       if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
         _showSnackBar(
           'Failed to submit application. Please try again.',
           isError: true,
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
       }
     }
   }

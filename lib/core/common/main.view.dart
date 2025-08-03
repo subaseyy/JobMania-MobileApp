@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jobmaniaapp/app/service_locator/service_locator.dart';
 import 'package:jobmaniaapp/features/application/domain/repository/job_application_repository.dart';
 import 'package:jobmaniaapp/features/application/presentation/view/appliedJobs.view.dart';
-import 'package:jobmaniaapp/features/application/presentation/view_model/applied_jobs.viewmodel.dart';
 import 'package:jobmaniaapp/features/application/presentation/view_model/applied_jobs_cubit.dart';
 import 'package:jobmaniaapp/features/home/presentation/view_model/dashboard_view_model.dart';
 import 'package:jobmaniaapp/features/job/domain/repository/job_repository.dart';
 import 'package:jobmaniaapp/features/job/presentation/view/allJobs.view.dart';
-import 'package:provider/provider.dart';
 
 import 'package:jobmaniaapp/features/user/presentation/view_model/profile_view_model.dart';
 

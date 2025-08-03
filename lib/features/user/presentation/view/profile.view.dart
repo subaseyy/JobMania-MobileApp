@@ -10,6 +10,7 @@ import 'package:jobmaniaapp/features/user/domain/entity/portfolio_entity.dart';
 import 'package:jobmaniaapp/features/user/domain/entity/profile_entity.dart';
 import 'package:jobmaniaapp/features/user/presentation/view_model/profile_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shake/shake.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -21,6 +22,7 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   bool eduExpanded = false, expExpanded = false, portExpanded = false;
   bool isEditing = false;
+  ShakeDetector? _shakeDetector;
 
   // Initialize controllers immediately to avoid LateInitializationError
   final TextEditingController titleController = TextEditingController();
@@ -36,6 +38,12 @@ class _ProfileViewState extends State<ProfileView> {
   void initState() {
     super.initState();
     _loadProfile();
+
+    _shakeDetector = ShakeDetector.autoStart(
+      onPhoneShake: () {
+        _logout();
+      },
+    );
   }
 
   Future<void> _loadProfile() async {
@@ -100,7 +108,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void dispose() {
     titleController.dispose();
-
+    _shakeDetector?.stopListening();
     locationController.dispose();
     companyController.dispose();
     profilePictureController.dispose();
